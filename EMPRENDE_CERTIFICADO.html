@@ -1,1 +1,732 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Certificados de Participación - CATA Emprende 2026</title>
+    <style>
+        /* Estilos Base y Control de Pantalla */
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #f4f6f9;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            color: #1a2530;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+        
+        /* Barra superior de impresión (No imprimible) */
+        .no-print-bar {
+            background-color: #0b1f3b;
+            padding: 15px;
+            text-align: center;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        .print-btn {
+            background-color: #d4af37;
+            color: #0b1f3b;
+            border: none;
+            padding: 12px 35px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        .print-btn:hover {
+            background-color: #f1cc5c;
+            transform: translateY(-1px);
+        }
+        
+        /* Contenedor principal de certificados */
+        .wrapper {
+            padding-top: 90px;
+            padding-bottom: 40px;
+        }
+        
+        /* Estructura del Certificado (A4 Horizontal Estándar) */
+        .certificate {
+            width: 297mm;
+            height: 210mm;
+            background: #ffffff;
+            margin: 0 auto 50px auto;
+            padding: 22mm;
+            position: relative;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.1);
+            page-break-after: always;
+            overflow: hidden;
+        }
+        
+        /* Marcos Decorativos Institucionales */
+        .border-outer {
+            border: 5px solid #0b1f3b;
+            width: 100%;
+            height: 100%;
+            position: relative;
+            padding: 4px;
+        }
+        .border-inner {
+            border: 2px solid #d4af37;
+            width: 100%;
+            height: 100%;
+            padding: 35px;
+            text-align: center;
+            position: relative;
+            background-image: radial-gradient(circle, rgba(212,175,55,0.02) 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+        
+        /* Ornamentos de Esquinas */
+        .corner {
+            position: absolute;
+            width: 35px;
+            height: 35px;
+            border-color: #d4af37;
+            border-style: solid;
+        }
+        .top-left { top: 12px; left: 12px; border-width: 4px 0 0 4px; }
+        .top-right { top: 12px; right: 12px; border-width: 4px 4px 0 0; }
+        .bottom-left { bottom: 12px; left: 12px; border-width: 0 0 4px 4px; }
+        .bottom-right { bottom: 12px; right: 12px; border-width: 0 4px 4px 0; }
+
+        /* Textos y Tipografías */
+        .institution {
+            font-size: 13pt;
+            font-weight: 700;
+            letter-spacing: 3px;
+            color: #0b1f3b;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+        }
+        .program {
+            font-size: 11pt;
+            letter-spacing: 1.5px;
+            color: #5c6b73;
+            margin-bottom: 35px;
+            font-weight: 500;
+        }
+        .title {
+            font-family: 'Georgia', 'Times New Roman', serif;
+            font-size: 34pt;
+            color: #0b1f3b;
+            margin-bottom: 25px;
+            font-weight: normal;
+            letter-spacing: 1px;
+        }
+        .concession-text {
+            font-size: 13pt;
+            color: #555;
+            margin-bottom: 15px;
+            font-style: italic;
+        }
+        .name {
+            font-family: 'Georgia', 'Times New Roman', serif;
+            font-size: 28pt;
+            color: #b58d16;
+            font-weight: bold;
+            margin-bottom: 25px;
+            border-bottom: 2px solid #f0e2b6;
+            display: inline-block;
+            padding-bottom: 6px;
+            min-width: 65%;
+        }
+        .description {
+            font-size: 13.5pt;
+            line-height: 1.7;
+            color: #2c3e50;
+            max-width: 82%;
+            margin: 0 auto 35px auto;
+        }
+        .team-highlight {
+            font-weight: bold;
+            color: #0b1f3b;
+            font-size: 14pt;
+        }
+        .date {
+            font-size: 11pt;
+            color: #7f8c8d;
+            margin-bottom: 50px;
+        }
+        
+        /* Bloque de Firmas Estructurado mediante Tabla */
+        .signatures-table {
+            width: 85%;
+            margin: 0 auto;
+            border-collapse: collapse;
+            border: none;
+        }
+        .signatures-table td {
+            width: 50%;
+            text-align: center;
+            vertical-align: bottom;
+            border: none;
+            padding: 0 30px;
+        }
+        .line {
+            border-top: 1px solid #b2bec3;
+            width: 220px;
+            margin: 0 auto 10px auto;
+        }
+        .signature-title {
+            font-size: 11pt;
+            font-weight: bold;
+            color: #0b1f3b;
+        }
+        .signature-sub {
+            font-size: 9.5pt;
+            color: #6c757d;
+            margin-top: 3px;
+        }
+
+        /* Reglas de Impresión */
+        @media print {
+            @page {
+                size: A4 landscape;
+                margin: 0;
+            }
+            body {
+                background-color: #ffffff;
+            }
+            .no-print-bar {
+                display: none;
+            }
+            .wrapper {
+                padding-top: 0;
+                padding-bottom: 0;
+            }
+            .certificate {
+                margin: 0;
+                box-shadow: none;
+                page-break-after: always;
+                width: 297mm;
+                height: 210mm;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Barra de herramientas superior (No se imprime) -->
+    <div class="no-print-bar">
+        <button class="print-btn" onclick="window.print()">🖨️ Imprimir Todos los Certificados</button>
+    </div>
+
+    <div class="wrapper">
+
+        <!-- Certificado para Eduardo Fernández -->
+        <div class="certificate">
+            <div class="border-outer">
+                <div class="border-inner">
+                    <!-- Esquinas Decorativas -->
+                    <div class="corner top-left"></div>
+                    <div class="corner top-right"></div>
+                    <div class="corner bottom-left"></div>
+                    <div class="corner bottom-right"></div>
+                    
+                    <!-- Encabezado Institucional -->
+                    <div class="institution">Centro de Excelencia en Astrofísica y Tecnologías Afines</div>
+                    <div class="program">Segunda Convocatoria • CATA EMPRENDE 2026</div>
+                    
+                    <!-- Título Principal -->
+                    <div class="title">Certificado de Participación</div>
+                    
+                    <div class="concession-text">Se otorga con distinción el presente documento a:</div>
+                    <div class="name">Eduardo Fernández</div>
+                    
+                    <!-- Texto de Acreditación -->
+                    <div class="description">
+                        Por su valiosa participación, compromiso y espíritu innovador a lo largo del programa integral de formación y aceleración de emprendimientos de base científico-tecnológica, coliderando activamente el proyecto <span class="team-highlight">"ECO-NET"</span>.
+                    </div>
+                    
+                    <div class="date">Santiago, Mayo de 2026</div>
+                    
+                    <!-- Bloque Estructurado de Firmas -->
+                    <table class="signatures-table">
+                        <tr>
+                            <td>
+                                <div class="line"></div>
+                                <div class="signature-title">Unidad de Transferencia Tecnológica</div>
+                                <div class="signature-sub">CATA</div>
+                            </td>
+                            <td>
+                                <div class="line"></div>
+                                <div class="signature-title">Dirección Ejecutiva</div>
+                                <div class="signature-sub">Programa CATA Emprende 2026</div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Certificado para Carlos Huenuhueque -->
+        <div class="certificate">
+            <div class="border-outer">
+                <div class="border-inner">
+                    <!-- Esquinas Decorativas -->
+                    <div class="corner top-left"></div>
+                    <div class="corner top-right"></div>
+                    <div class="corner bottom-left"></div>
+                    <div class="corner bottom-right"></div>
+                    
+                    <!-- Encabezado Institucional -->
+                    <div class="institution">Centro de Excelencia en Astrofísica y Tecnologías Afines</div>
+                    <div class="program">Segunda Convocatoria • CATA EMPRENDE 2026</div>
+                    
+                    <!-- Título Principal -->
+                    <div class="title">Certificado de Participación</div>
+                    
+                    <div class="concession-text">Se otorga con distinción el presente documento a:</div>
+                    <div class="name">Carlos Huenuhueque</div>
+                    
+                    <!-- Texto de Acreditación -->
+                    <div class="description">
+                        Por su valiosa participación, compromiso y espíritu innovador a lo largo del programa integral de formación y aceleración de emprendimientos de base científico-tecnológica, coliderando activamente el proyecto <span class="team-highlight">"ECO-NET"</span>.
+                    </div>
+                    
+                    <div class="date">Santiago, Mayo de 2026</div>
+                    
+                    <!-- Bloque Estructurado de Firmas -->
+                    <table class="signatures-table">
+                        <tr>
+                            <td>
+                                <div class="line"></div>
+                                <div class="signature-title">Unidad de Transferencia Tecnológica</div>
+                                <div class="signature-sub">CATA</div>
+                            </td>
+                            <td>
+                                <div class="line"></div>
+                                <div class="signature-title">Dirección Ejecutiva</div>
+                                <div class="signature-sub">Programa CATA Emprende 2026</div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Certificado para Maximiliano Montoya -->
+        <div class="certificate">
+            <div class="border-outer">
+                <div class="border-inner">
+                    <!-- Esquinas Decorativas -->
+                    <div class="corner top-left"></div>
+                    <div class="corner top-right"></div>
+                    <div class="corner bottom-left"></div>
+                    <div class="corner bottom-right"></div>
+                    
+                    <!-- Encabezado Institucional -->
+                    <div class="institution">Centro de Excelencia en Astrofísica y Tecnologías Afines</div>
+                    <div class="program">Segunda Convocatoria • CATA EMPRENDE 2026</div>
+                    
+                    <!-- Título Principal -->
+                    <div class="title">Certificado de Participación</div>
+                    
+                    <div class="concession-text">Se otorga con distinción el presente documento a:</div>
+                    <div class="name">Maximiliano Montoya</div>
+                    
+                    <!-- Texto de Acreditación -->
+                    <div class="description">
+                        Por su valiosa participación, compromiso y espíritu innovador a lo largo del programa integral de formación y aceleración de emprendimientos de base científico-tecnológica, coliderando activamente el proyecto <span class="team-highlight">"RESPIRA IA"</span>.
+                    </div>
+                    
+                    <div class="date">Santiago, Mayo de 2026</div>
+                    
+                    <!-- Bloque Estructurado de Firmas -->
+                    <table class="signatures-table">
+                        <tr>
+                            <td>
+                                <div class="line"></div>
+                                <div class="signature-title">Unidad de Transferencia Tecnológica</div>
+                                <div class="signature-sub">CATA</div>
+                            </td>
+                            <td>
+                                <div class="line"></div>
+                                <div class="signature-title">Dirección Ejecutiva</div>
+                                <div class="signature-sub">Programa CATA Emprende 2026</div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Certificado para Omar Arbush -->
+        <div class="certificate">
+            <div class="border-outer">
+                <div class="border-inner">
+                    <!-- Esquinas Decorativas -->
+                    <div class="corner top-left"></div>
+                    <div class="corner top-right"></div>
+                    <div class="corner bottom-left"></div>
+                    <div class="corner bottom-right"></div>
+                    
+                    <!-- Encabezado Institucional -->
+                    <div class="institution">Centro de Excelencia en Astrofísica y Tecnologías Afines</div>
+                    <div class="program">Segunda Convocatoria • CATA EMPRENDE 2026</div>
+                    
+                    <!-- Título Principal -->
+                    <div class="title">Certificado de Participación</div>
+                    
+                    <div class="concession-text">Se otorga con distinción el presente documento a:</div>
+                    <div class="name">Omar Arbush</div>
+                    
+                    <!-- Texto de Acreditación -->
+                    <div class="description">
+                        Por su valiosa participación, compromiso y espíritu innovador a lo largo del programa integral de formación y aceleración de emprendimientos de base científico-tecnológica, coliderando activamente el proyecto <span class="team-highlight">"RESPIRA IA"</span>.
+                    </div>
+                    
+                    <div class="date">Santiago, Mayo de 2026</div>
+                    
+                    <!-- Bloque Estructurado de Firmas -->
+                    <table class="signatures-table">
+                        <tr>
+                            <td>
+                                <div class="line"></div>
+                                <div class="signature-title">Unidad de Transferencia Tecnológica</div>
+                                <div class="signature-sub">CATA</div>
+                            </td>
+                            <td>
+                                <div class="line"></div>
+                                <div class="signature-title">Dirección Ejecutiva</div>
+                                <div class="signature-sub">Programa CATA Emprende 2026</div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Certificado para Felipe Carrasco -->
+        <div class="certificate">
+            <div class="border-outer">
+                <div class="border-inner">
+                    <!-- Esquinas Decorativas -->
+                    <div class="corner top-left"></div>
+                    <div class="corner top-right"></div>
+                    <div class="corner bottom-left"></div>
+                    <div class="corner bottom-right"></div>
+                    
+                    <!-- Encabezado Institucional -->
+                    <div class="institution">Centro de Excelencia en Astrofísica y Tecnologías Afines</div>
+                    <div class="program">Segunda Convocatoria • CATA EMPRENDE 2026</div>
+                    
+                    <!-- Título Principal -->
+                    <div class="title">Certificado de Participación</div>
+                    
+                    <div class="concession-text">Se otorga con distinción el presente documento a:</div>
+                    <div class="name">Felipe Carrasco</div>
+                    
+                    <!-- Texto de Acreditación -->
+                    <div class="description">
+                        Por su valiosa participación, compromiso y espíritu innovador a lo largo del programa integral de formación y aceleración de emprendimientos de base científico-tecnológica, coliderando activamente el proyecto <span class="team-highlight">"RESPIRA IA"</span>.
+                    </div>
+                    
+                    <div class="date">Santiago, Mayo de 2026</div>
+                    
+                    <!-- Bloque Estructurado de Firmas -->
+                    <table class="signatures-table">
+                        <tr>
+                            <td>
+                                <div class="line"></div>
+                                <div class="signature-title">Unidad de Transferencia Tecnológica</div>
+                                <div class="signature-sub">CATA</div>
+                            </td>
+                            <td>
+                                <div class="line"></div>
+                                <div class="signature-title">Dirección Ejecutiva</div>
+                                <div class="signature-sub">Programa CATA Emprende 2026</div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Certificado para Luciano Alfaro Cataldo -->
+        <div class="certificate">
+            <div class="border-outer">
+                <div class="border-inner">
+                    <!-- Esquinas Decorativas -->
+                    <div class="corner top-left"></div>
+                    <div class="corner top-right"></div>
+                    <div class="corner bottom-left"></div>
+                    <div class="corner bottom-right"></div>
+                    
+                    <!-- Encabezado Institucional -->
+                    <div class="institution">Centro de Excelencia en Astrofísica y Tecnologías Afines</div>
+                    <div class="program">Segunda Convocatoria • CATA EMPRENDE 2026</div>
+                    
+                    <!-- Título Principal -->
+                    <div class="title">Certificado de Participación</div>
+                    
+                    <div class="concession-text">Se otorga con distinción el presente documento a:</div>
+                    <div class="name">Luciano Alfaro Cataldo</div>
+                    
+                    <!-- Texto de Acreditación -->
+                    <div class="description">
+                        Por su valiosa participación, compromiso y espíritu innovador a lo largo del programa integral de formación y aceleración de emprendimientos de base científico-tecnológica, coliderando activamente el proyecto <span class="team-highlight">"GEOSALUS"</span>.
+                    </div>
+                    
+                    <div class="date">Santiago, Mayo de 2026</div>
+                    
+                    <!-- Bloque Estructurado de Firmas -->
+                    <table class="signatures-table">
+                        <tr>
+                            <td>
+                                <div class="line"></div>
+                                <div class="signature-title">Unidad de Transferencia Tecnológica</div>
+                                <div class="signature-sub">CATA</div>
+                            </td>
+                            <td>
+                                <div class="line"></div>
+                                <div class="signature-title">Dirección Ejecutiva</div>
+                                <div class="signature-sub">Programa CATA Emprende 2026</div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Certificado para Flavio Ocampo -->
+        <div class="certificate">
+            <div class="border-outer">
+                <div class="border-inner">
+                    <!-- Esquinas Decorativas -->
+                    <div class="corner top-left"></div>
+                    <div class="corner top-right"></div>
+                    <div class="corner bottom-left"></div>
+                    <div class="corner bottom-right"></div>
+                    
+                    <!-- Encabezado Institucional -->
+                    <div class="institution">Centro de Excelencia en Astrofísica y Tecnologías Afines</div>
+                    <div class="program">Segunda Convocatoria • CATA EMPRENDE 2026</div>
+                    
+                    <!-- Título Principal -->
+                    <div class="title">Certificado de Participación</div>
+                    
+                    <div class="concession-text">Se otorga con distinción el presente documento a:</div>
+                    <div class="name">Flavio Ocampo</div>
+                    
+                    <!-- Texto de Acreditación -->
+                    <div class="description">
+                        Por su valiosa participación, compromiso y espíritu innovador a lo largo del programa integral de formación y aceleración de emprendimientos de base científico-tecnológica, coliderando activamente el proyecto <span class="team-highlight">"GEOSALUS"</span>.
+                    </div>
+                    
+                    <div class="date">Santiago, Mayo de 2026</div>
+                    
+                    <!-- Bloque Estructurado de Firmas -->
+                    <table class="signatures-table">
+                        <tr>
+                            <td>
+                                <div class="line"></div>
+                                <div class="signature-title">Unidad de Transferencia Tecnológica</div>
+                                <div class="signature-sub">CATA</div>
+                            </td>
+                            <td>
+                                <div class="line"></div>
+                                <div class="signature-title">Dirección Ejecutiva</div>
+                                <div class="signature-sub">Programa CATA Emprende 2026</div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Certificado para Franko Dávalos -->
+        <div class="certificate">
+            <div class="border-outer">
+                <div class="border-inner">
+                    <!-- Esquinas Decorativas -->
+                    <div class="corner top-left"></div>
+                    <div class="corner top-right"></div>
+                    <div class="corner bottom-left"></div>
+                    <div class="corner bottom-right"></div>
+                    
+                    <!-- Encabezado Institucional -->
+                    <div class="institution">Centro de Excelencia en Astrofísica y Tecnologías Afines</div>
+                    <div class="program">Segunda Convocatoria • CATA EMPRENDE 2026</div>
+                    
+                    <!-- Título Principal -->
+                    <div class="title">Certificado de Participación</div>
+                    
+                    <div class="concession-text">Se otorga con distinción el presente documento a:</div>
+                    <div class="name">Franko Dávalos</div>
+                    
+                    <!-- Texto de Acreditación -->
+                    <div class="description">
+                        Por su valiosa participación, compromiso y espíritu innovador a lo largo del programa integral de formación y aceleración de emprendimientos de base científico-tecnológica, coliderando activamente el proyecto <span class="team-highlight">"GEOSALUS"</span>.
+                    </div>
+                    
+                    <div class="date">Santiago, Mayo de 2026</div>
+                    
+                    <!-- Bloque Estructurado de Firmas -->
+                    <table class="signatures-table">
+                        <tr>
+                            <td>
+                                <div class="line"></div>
+                                <div class="signature-title">Unidad de Transferencia Tecnológica</div>
+                                <div class="signature-sub">CATA</div>
+                            </td>
+                            <td>
+                                <div class="line"></div>
+                                <div class="signature-title">Dirección Ejecutiva</div>
+                                <div class="signature-sub">Programa CATA Emprende 2026</div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Certificado para René Castro -->
+        <div class="certificate">
+            <div class="border-outer">
+                <div class="border-inner">
+                    <!-- Esquinas Decorativas -->
+                    <div class="corner top-left"></div>
+                    <div class="corner top-right"></div>
+                    <div class="corner bottom-left"></div>
+                    <div class="corner bottom-right"></div>
+                    
+                    <!-- Encabezado Institucional -->
+                    <div class="institution">Centro de Excelencia en Astrofísica y Tecnologías Afines</div>
+                    <div class="program">Segunda Convocatoria • CATA EMPRENDE 2026</div>
+                    
+                    <!-- Título Principal -->
+                    <div class="title">Certificado de Participación</div>
+                    
+                    <div class="concession-text">Se otorga con distinción el presente documento a:</div>
+                    <div class="name">René Castro</div>
+                    
+                    <!-- Texto de Acreditación -->
+                    <div class="description">
+                        Por su valiosa participación, compromiso y espíritu innovador a lo largo del programa integral de formación y aceleración de emprendimientos de base científico-tecnológica, coliderando activamente el proyecto <span class="team-highlight">"GEOSALUS"</span>.
+                    </div>
+                    
+                    <div class="date">Santiago, Mayo de 2026</div>
+                    
+                    <!-- Bloque Estructurado de Firmas -->
+                    <table class="signatures-table">
+                        <tr>
+                            <td>
+                                <div class="line"></div>
+                                <div class="signature-title">Unidad de Transferencia Tecnológica</div>
+                                <div class="signature-sub">CATA</div>
+                            </td>
+                            <td>
+                                <div class="line"></div>
+                                <div class="signature-title">Dirección Ejecutiva</div>
+                                <div class="signature-sub">Programa CATA Emprende 2026</div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Certificado para Catalina Belén Campos Carlson -->
+        <div class="certificate">
+            <div class="border-outer">
+                <div class="border-inner">
+                    <!-- Esquinas Decorativas -->
+                    <div class="corner top-left"></div>
+                    <div class="corner top-right"></div>
+                    <div class="corner bottom-left"></div>
+                    <div class="corner bottom-right"></div>
+                    
+                    <!-- Encabezado Institucional -->
+                    <div class="institution">Centro de Excelencia en Astrofísica y Tecnologías Afines</div>
+                    <div class="program">Segunda Convocatoria • CATA EMPRENDE 2026</div>
+                    
+                    <!-- Título Principal -->
+                    <div class="title">Certificado de Participación</div>
+                    
+                    <div class="concession-text">Se otorga con distinción el presente documento a:</div>
+                    <div class="name">Catalina Belén Campos Carlson</div>
+                    
+                    <!-- Texto de Acreditación -->
+                    <div class="description">
+                        Por su valiosa participación, compromiso y espíritu innovador a lo largo del programa integral de formación y aceleración de emprendimientos de base científico-tecnológica, coliderando activamente el proyecto <span class="team-highlight">"OPEN SPECTRUM"</span>.
+                    </div>
+                    
+                    <div class="date">Santiago, Mayo de 2026</div>
+                    
+                    <!-- Bloque Estructurado de Firmas -->
+                    <table class="signatures-table">
+                        <tr>
+                            <td>
+                                <div class="line"></div>
+                                <div class="signature-title">Unidad de Transferencia Tecnológica</div>
+                                <div class="signature-sub">CATA</div>
+                            </td>
+                            <td>
+                                <div class="line"></div>
+                                <div class="signature-title">Dirección Ejecutiva</div>
+                                <div class="signature-sub">Programa CATA Emprende 2026</div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Certificado para Maximiliano Taverne -->
+        <div class="certificate">
+            <div class="border-outer">
+                <div class="border-inner">
+                    <!-- Esquinas Decorativas -->
+                    <div class="corner top-left"></div>
+                    <div class="corner top-right"></div>
+                    <div class="corner bottom-left"></div>
+                    <div class="corner bottom-right"></div>
+                    
+                    <!-- Encabezado Institucional -->
+                    <div class="institution">Centro de Excelencia en Astrofísica y Tecnologías Afines</div>
+                    <div class="program">Segunda Convocatoria • CATA EMPRENDE 2026</div>
+                    
+                    <!-- Título Principal -->
+                    <div class="title">Certificado de Participación</div>
+                    
+                    <div class="concession-text">Se otorga con distinción el presente documento a:</div>
+                    <div class="name">Maximiliano Taverne</div>
+                    
+                    <!-- Texto de Acreditación -->
+                    <div class="description">
+                        Por su valiosa participación, compromiso y espíritu innovador a lo largo del programa integral de formación y aceleración de emprendimientos de base científico-tecnológica, coliderando activamente el proyecto <span class="team-highlight">"OPEN SPECTRUM"</span>.
+                    </div>
+                    
+                    <div class="date">Santiago, Mayo de 2026</div>
+                    
+                    <!-- Bloque Estructurado de Firmas -->
+                    <table class="signatures-table">
+                        <tr>
+                            <td>
+                                <div class="line"></div>
+                                <div class="signature-title">Unidad de Transferencia Tecnológica</div>
+                                <div class="signature-sub">CATA</div>
+                            </td>
+                            <td>
+                                <div class="line"></div>
+                                <div class="signature-title">Dirección Ejecutiva</div>
+                                <div class="signature-sub">Programa CATA Emprende 2026</div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+</body>
+</html>
 
